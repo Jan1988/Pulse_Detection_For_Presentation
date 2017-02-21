@@ -112,7 +112,8 @@ while True:
         cv2.putText(frame_clone, "Current BPM: %s" % str(bpm), (10, 25), cv2.FONT_HERSHEY_PLAIN, 1.25,
                     col)
 
-    cv2.imshow('frame_clone', frame_clone)
+    small = cv2.resize(frame_clone, (0, 0), fx=0.5, fy=0.5)
+    cv2.imshow('frame_clone', small)
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
 
