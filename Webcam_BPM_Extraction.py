@@ -10,18 +10,8 @@ from Load_Video import load_video
 
 face_cascade_path = os.path.join('C:/', 'Anaconda3', 'pkgs', 'opencv3-3.1.0-py35_0', 'Library', 'etc', 'haarcascades', 'haarcascade_frontalface_default.xml')
 eye_cascade_path = os.path.join('C:/', 'Anaconda3', 'pkgs', 'opencv3-3.1.0-py35_0', 'Library', 'etc', 'haarcascades', 'haarcascade_eye.xml')
-dir_path = os.path.join('assets')
-file = '00080.MTS'
-file_path = os.path.join(dir_path, file)
 
-window_numbers = 7
 window_size = 48
-frame_count = window_numbers * window_size + 1
-
-video_frames, fps = load_video(file_path)
-video_frames = video_frames[1:frame_count]
-print('Reduced Frame Count: ' + str(len(video_frames)))
-col = (100, 255, 100)
 
 red_mean_lst = []
 green_mean_lst = []
@@ -36,6 +26,7 @@ face_rect = [1, 1, 2, 2]
 last_center = np.array([0, 0])
 find_faces = True
 buffer_size = window_size * 3
+col = (100, 255, 100)
 
 roi_means_buffer = []
 h_signal_buffer = []
@@ -75,7 +66,11 @@ def get_subface_means(coord, frame_in):
     return channel_means
 
 
-for j, frame in enumerate(video_frames):
+cap = cv2.VideoCapture(0)
+
+while True:
+    ret, frame = cap.read()
+
     # print('frame: ' + str(j))
     frame_clone = frame.copy()
 
@@ -116,13 +111,13 @@ for j, frame in enumerate(video_frames):
         bpm, bandpassed_fft, heart_rates, fft, raw = get_bpm(h_signal, 25)
         cv2.putText(frame_clone, "Current BPM: %s" % str(bpm), (10, 25), cv2.FONT_HERSHEY_PLAIN, 1.25,
                     col)
+
     cv2.imshow('frame_clone', frame_clone)
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
 
-
-
-# roi_means_buffer = np.asarray(roi_means_buffer)
+cap.release()
+cv2.destroyAllWindows()
 
 fig = plt.figure(figsize=(15, 10))
 fig.suptitle('BPM: ' + str(bpm), fontsize=20, fontweight='bold')
